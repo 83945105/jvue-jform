@@ -8,7 +8,7 @@
              @focus="onFocus">
     <slot name="select.default">
       <el-option :value="new Date().getTime()" style="height: auto">
-        <el-tree ref="tree" :data="treeData_" v-bind="treeBind__"
+        <el-tree ref="tree" :data="treeData" v-bind="treeBind__"
                  @node-click="onNodeClick"
                  @node-contextmenu="onNodeContextmenu"
                  @check-change="onCheckChange"
@@ -74,7 +74,12 @@
       automaticDropdown: Boolean,
 
       data: [Object, Array],  // 支持.sync
-      treeData: Array,
+      treeData: {
+        type: Array,
+        default() {
+          return [];
+        }
+      },
       emptyText: String,
       nodeKey: String,
       props: {
@@ -122,8 +127,7 @@
 
     data() {
       return {
-        data_: {},
-        treeData_: []
+        data_: {}
       };
     },
 
@@ -231,24 +235,6 @@
         handler(val) {
           this.$emit('update:data', val);
           this.$emit('input', val ? this.multiple ? val.map(v => v[this.nodeKey__]) : val[this.nodeKey__] : val);
-        }
-      },
-      treeData: {
-        immediate: true,
-        handler(val) {
-          if (!val) {
-            this.treeData_ = [];
-            return;
-          }
-          this.treeData_ = val.map(data => {
-            let _data = {};
-            _data[this.props.label] = data.label;
-            _data[this.props.value] = data.value;
-            _data[this.props.disabled] = !!data.disabled;
-            _data[this.props.isLeaf] = !!data.leaf;
-            _data[this.props.children] = data.children;
-            return _data;
-          });
         }
       },
       multipleLimit__: {
