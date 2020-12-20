@@ -1,9 +1,5 @@
 <template>
-  <div class="j-description wordwrap"
-       :class="class__"
-       :style="style__"
-  >{{value}}
-  </div>
+  <div class="j-description wordwrap" :class="class__" :style="style__">{{value}}</div>
 </template>
 
 <script>
@@ -66,7 +62,7 @@
           if (isNaN(this.height)) {
             _style.height = this.height;
           } else {
-            _style.height = `${this.height}px`;
+            _style.height = this.height + 'px';
           }
         }
         return _style;

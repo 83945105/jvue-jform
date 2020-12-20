@@ -35,8 +35,6 @@
 </template>
 
 <script>
-  import {compare, isArray} from "../../../src/utils/util";
-
   export default {
     name: "j-el-select-tree",
 
@@ -134,11 +132,11 @@
     computed: {
       selectValue__() {
         if (!this.data_) return this.multiple ? [] : null;
-        return this.multiple ? isArray(this.data_) ? this.data_.map(d => d[this.props.value]) : null : this.data_[this.props.value];
+        return this.multiple ? this.isArray(this.data_) ? this.data_.map(d => d[this.props.value]) : null : this.data_[this.props.value];
       },
       selectOptions__() {
         if (this.multiple) {
-          return isArray(this.data_) ? this.data_.map(data => {
+          return this.isArray(this.data_) ? this.data_.map(data => {
             return {
               label: data[this.props.label],
               value: data[this.props.value]
@@ -175,7 +173,7 @@
         return this.nodeKey || this.props.value
       },
       checkKeys__() {
-        if (!this.multiple || !this.data_ || !isArray(this.data_)) return [];
+        if (!this.multiple || !this.data_ || !this.isArray(this.data_)) return [];
         return this.data_.map(d => d[this.nodeKey__]);
       },
       multipleLimit__() {
@@ -256,11 +254,11 @@
           return;
         }
         if (this.multiple) {
-          let _data = isArray(data) ? data.map(d => {
+          let _data = this.isArray(data) ? data.map(d => {
             let node = this.$refs.tree.getNode(d[this.nodeKey__]);
             return node ? node.data : d;
           }) : [];
-          if (compare(_data, this.data_)) return;
+          if (JSON.stringify(_data) === JSON.stringify(this.data_)) return;
           this.data_ = _data;
           return;
         }
@@ -337,6 +335,9 @@
       },
       onNodeCollapse(data, node, vm) {
         this.$emit('node-collapse', data, node, vm);
+      },
+      isArray(obj) {
+        return Object.prototype.toString.call(obj).toLowerCase() === "[object array]";
       }
     }
   }
