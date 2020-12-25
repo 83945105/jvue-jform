@@ -50,7 +50,7 @@ export default {
     radioGroupData: {
       immediate: true,
       handler(val) {
-        console.log(val)
+        // console.log(val)
       }
     }
   }

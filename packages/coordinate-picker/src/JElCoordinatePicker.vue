@@ -2,12 +2,12 @@
   <el-card>
     <el-row slot="header" :gutter="20">
       <el-col :span="8">
-        <el-input v-model="value_[0]" :disabled="disabled" :size="size__">
+        <el-input v-model="value_.lng" :disabled="disabled" :size="size__">
           <span slot="prepend">lng</span>
         </el-input>
       </el-col>
       <el-col :span="8">
-        <el-input v-model="value_[1]" :disabled="disabled" :size="size__">
+        <el-input v-model="value_.lat" :disabled="disabled" :size="size__">
           <span slot="prepend">lat</span>
         </el-input>
       </el-col>
@@ -49,7 +49,7 @@
     },
 
     props: {
-      value: Array,
+      value: Object,
       disabled: Boolean,
       size: {                     // 尺寸
         type: String,
@@ -75,7 +75,7 @@
 
     data() {
       return {
-        value_: [],
+        value_: {...this.mapCenter},
         searchKeyword_: ''
       };
     },
@@ -95,18 +95,23 @@
         handler(val) {
           if (!val) return;
           this.value_ = val;
-        }
+        },
+        deep: true
       },
       value_: {
+        immediate: true,
         handler(val) {
           this.$emit('input', val);
-        }
+        },
+        deep: true
       }
     },
 
     methods: {
       onClickMap(e) {
-        this.value_ = [e.point.lng, e.point.lat];
+        if (this.disabled) return;
+        this.value_.lng = e.point.lng;
+        this.value_.lat = e.point.lat;
       }
     }
   }
