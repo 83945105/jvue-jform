@@ -30,13 +30,11 @@
         <span v-else>#</span>
       </template>
       <template #append>
-        <div v-if="form_.data.length > 0" style="text-align: center">
-          <el-button v-if="appendEnabled"
-                     :disabled="appendButtonDisabled__" type="primary" icon="el-icon-plus"
+        <div v-if="appendEnabled && form_.data.length > 0" style="text-align: center">
+          <el-button :disabled="appendButtonDisabled__" type="primary" icon="el-icon-plus"
                      circle size="mini"
                      @click="append"
           ></el-button>
-          <span v-else>#</span>
         </div>
       </template>
       <el-table-column header-align="center" align="center" width="50px" fixed="left">
