@@ -33,7 +33,13 @@ export default {
             tag: 'j-el-icon-picker'
           },
           {
-            tag: 'j-el-coordinate-picker'
+            tag: 'j-el-coordinate-picker',
+            options: {
+              props: {
+                size: 'mini',
+                mapHeight: 300
+              }
+            }
           }
         ]
       }

@@ -1,52 +1,63 @@
 <template>
-  <el-row>
-    <el-col :span="1"><span>lng</span></el-col>
-    <el-col :span="8">
-      <el-input-number v-model="value_[0]"
-                       :precision="6" :step="1" :controls="false" :disabled="disabled" :size="size"
-                       style="width: 100%"/>
-    </el-col>
-    <el-col :span="1" :offset="1"><span>lat</span></el-col>
-    <el-col :span="8">
-      <el-input-number v-model="value_[1]"
-                       :precision="6" :step="1" :controls="false" :disabled="disabled" :size="size"
-                       style="width: 100%"/>
-    </el-col>
-    <el-col :span="4" :offset="1">
-      <el-button type="primary" icon="el-icon-map-location" :disabled="disabled" :size="size"
-                 @click="dialogVisible_ = true"/>
-    </el-col>
-    <j-el-dialog :visible.sync="dialogVisible_" title="选择坐标" append-to-body :close-on-click-modal="false">
-      <template #default="{height}">
-        <el-input v-model="searchKeyword_" placeholder="请输入地址查找相关位置" style="margin-bottom: 15px"/>
-        <template v-if="$options.components && $options.components['baidu-map']">
-          <baidu-map scroll-wheel-zoom :center="mapCenter" :zoom="mapZoom"
-                     @click="onClickMap">
-            <bm-view :style="{
-                                width: '100%',
-                                height: `${height - 55}px`,
-                                flex: 1
-                             }"
-            />
-            <bm-local-search :keyword="searchKeyword_" auto-viewport style="display: none"/>
-          </baidu-map>
-        </template>
-        <template v-else>
-          <span>坐标拾取器缺少依赖库: vue-baidu-map</span>
-        </template>
-      </template>
-    </j-el-dialog>
-  </el-row>
+  <el-card>
+    <el-row slot="header" :gutter="20">
+      <el-col :span="8">
+        <el-input v-model="value_[0]" :disabled="disabled" :size="size__">
+          <span slot="prepend">lng</span>
+        </el-input>
+      </el-col>
+      <el-col :span="8">
+        <el-input v-model="value_[1]" :disabled="disabled" :size="size__">
+          <span slot="prepend">lat</span>
+        </el-input>
+      </el-col>
+      <el-col :span="8">
+        <el-input v-model="searchKeyword_" :disabled="disabled" :size="size__" placeholder="请输入地址查找相关位置">
+          <i slot="append" class="el-icon-search"></i>
+        </el-input>
+      </el-col>
+    </el-row>
+    <template v-if="$options.components && $options.components['baidu-map']">
+      <baidu-map scroll-wheel-zoom :center="mapCenter" :zoom="mapZoom"
+                 @click="onClickMap">
+        <bm-view :style="{
+                            width: '100%',
+                            height: `${!!mapHeight ? mapHeight : 300}px`,
+                            flex: 1
+                         }"
+        />
+        <bm-local-search :keyword="searchKeyword_" auto-viewport style="display: none"/>
+      </baidu-map>
+    </template>
+    <template v-else>
+      <span>坐标拾取器缺少依赖库: vue-baidu-map</span>
+    </template>
+  </el-card>
 </template>
 
 <script>
   export default {
     name: "j-el-coordinate-picker",
 
+    inject: {
+      elForm: {
+        default: ''
+      },
+      elFormItem: {
+        default: ''
+      }
+    },
+
     props: {
       value: Array,
       disabled: Boolean,
-      size: String,
+      size: {                     // 尺寸
+        type: String,
+        validator(value) {
+          return ['medium', 'small', 'mini'].indexOf(value) !== -1;
+        }
+      },
+      mapHeight: Number,
       mapCenter: {
         type: Object,
         default() {
@@ -65,9 +76,17 @@
     data() {
       return {
         value_: [],
-        dialogVisible_: false,
         searchKeyword_: ''
       };
+    },
+
+    computed: {
+      elFormItemSize__() {
+        return (this.elFormItem || {}).elFormItemSize;
+      },
+      size__() {
+        return this.size || this.elFormItemSize__ || (this.$ELEMENT || {}).size;
+      },
     },
 
     watch: {
@@ -88,7 +107,6 @@
     methods: {
       onClickMap(e) {
         this.value_ = [e.point.lng, e.point.lat];
-        this.dialogVisible_ = false;
       }
     }
   }
